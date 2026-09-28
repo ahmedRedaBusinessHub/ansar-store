@@ -1,0 +1,7 @@
+.or-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.or-head h1{margin:0;font-size:28px}
+.or-lines{list-style:none;padding:0;margin:12px 0;display:grid;gap:10px}
+.or-lines li{display:flex;gap:12px;align-items:center}
+.or-lines img{width:56px;height:56px;object-fit:cover;border-radius:4px;background:var(--paper,#f5f6f3)}
+.or-meta{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:14px;color:var(--muted,#68726b)}
+.or-banner{padding:14px 16px;border-radius:6px;background:#e3f1e8;color:#17533d;margin-bottom:16px}
