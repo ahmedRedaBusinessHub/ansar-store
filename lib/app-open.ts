@@ -11,3 +11,12 @@ export function detectDevice(userAgent: string, platform: string, maxTouchPoints
   if (platform === "MacIntel" && maxTouchPoints > 1) return "ios";
   return "other";
 }
+
+// Android: Chrome opens the installed app, or follows the fallback to Play when it is missing.
+// iOS: custom scheme only; the page falls back to the App Store when the app does not take over.
+export function appLaunchUrl(device: Exclude<Device, "other">): string {
+  if (device === "android") {
+    return `intent://open#Intent;scheme=alansar;package=sa.alansar;S.browser_fallback_url=${encodeURIComponent(STORE_URLS.android)};end`;
+  }
+  return "alansar://open";
+}

@@ -2,20 +2,50 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { detectDevice, STORE_URLS, type Device } from "@/lib/app-open";
+import { appLaunchUrl, detectDevice, STORE_URLS, type Device } from "@/lib/app-open";
 import styles from "./open.module.css";
 import { Loader2, ArrowLeft, Smartphone } from "lucide-react";
 
 export default function OpenPage() {
   const [device, setDevice] = useState<Device | null>(null);
+  const [launching, setLaunching] = useState(false);
 
   useEffect(() => {
     const detected = detectDevice(navigator.userAgent, navigator.platform, navigator.maxTouchPoints);
     setDevice(detected);
 
-    // Auto-redirect for desktop users is disabled to allow testing/previewing the UI
-    // In production, you might want to re-enable this or leave the beautiful desktop fallback
-    if (detected === "other") window.location.replace("/");
+    if (detected === "other") {
+      window.location.replace("/");
+      return;
+    }
+
+    // Coming back from the store or the app: show the buttons instead of bouncing again.
+    const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    if (nav?.type === "back_forward") return;
+
+    // Reaching this page means the OS did not hand the link to the app (not installed, or an
+    // installed build without verified links). Try the app, then send the user to the store if
+    // the page is still in front.
+    setLaunching(true);
+    const fallback = window.setTimeout(() => {
+      if (document.visibilityState === "visible") window.location.href = STORE_URLS[detected];
+      setLaunching(false);
+    }, 1800);
+    const cancel = () => {
+      if (document.visibilityState === "hidden") {
+        window.clearTimeout(fallback);
+        setLaunching(false);
+      }
+    };
+    document.addEventListener("visibilitychange", cancel);
+    window.addEventListener("pagehide", cancel);
+    window.location.href = appLaunchUrl(detected);
+
+    return () => {
+      window.clearTimeout(fallback);
+      document.removeEventListener("visibilitychange", cancel);
+      window.removeEventListener("pagehide", cancel);
+    };
   }, []);
 
   return (
@@ -45,9 +75,16 @@ export default function OpenPage() {
             </div>
           )}
 
-          {device && device !== "other" && (
+          {launching && (
+            <div className={styles.loading}>
+              <Loader2 className={styles.spinner} />
+              <span>جاري فتح التطبيق...</span>
+            </div>
+          )}
+
+          {device && device !== "other" && !launching && (
             <nav aria-label="خيارات التطبيق" className={styles.actions}>
-              <a href="alansar://" className={styles.primaryBtn}>
+              <a href={appLaunchUrl(device)} className={styles.primaryBtn}>
                 <span>فتح التطبيق</span>
               </a>
               <a href={STORE_URLS[device]} className={styles.secondaryBtn}>
