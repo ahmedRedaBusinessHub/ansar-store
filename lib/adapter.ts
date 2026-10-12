@@ -16,7 +16,11 @@ const rowSchema = z.object({
   description_ar: z.string().nullish(),
   image_url: z.string().nullish(),
   price: money,
+  original_price: money.nullish(),
   product_type: z.enum(["REGULAR", "INVITATION_TICKET", "INVITATION_TICKET_BOOK"]),
+  // Review aggregates (web-api store feed). A bad value only hides the rating, never the product.
+  avg_rating: z.number().min(0).max(5).nullish().catch(null),
+  reviews_count: z.number().int().min(0).nullish().catch(null),
   images: z.array(z.object({ image_url: z.string(), is_main: z.boolean().optional(), order: z.number().optional() })).default([]),
   attribute_groups: z.array(z.object({
     id: z.string(), name_ar: z.string(), is_required: z.boolean(), display_order: z.number().optional(),
@@ -65,6 +69,10 @@ export function toProduct(row: unknown): Product | null {
     subtitle: "",
     category: "all",
     price: item.price,
+    // Only a real offer survives: absent, equal or inverted pairs drop the key.
+    ...(item.original_price != null && item.original_price > item.price
+      ? { originalPrice: item.original_price }
+      : {}),
     image: images[0],
     images,
     colors: [],
@@ -72,6 +80,7 @@ export function toProduct(row: unknown): Product | null {
     description: stripHtml(item.description_ar ?? ""),
     details: [],
     productType: item.product_type,
+    ...(item.avg_rating != null && item.reviews_count ? { rating: { average: item.avg_rating, count: item.reviews_count } } : {}),
   };
 }
 

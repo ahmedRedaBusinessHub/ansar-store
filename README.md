@@ -48,6 +48,10 @@ The browser only talks to these routes; they call web-api server-to-server.
 | `GET /api/store` | Site content + current catalog |
 | `GET /api/products` | `{ products, total, page, pages }` — `q`, `category=all`, `sort=featured\|price-asc\|price-desc`, `page`, `limit` (1-48) |
 | `GET /api/products/[id]` | One product |
+| `GET /api/products/[id]/reviews` | `{ reviews, page, pages, total }` — published reviews, 5 per page; `sort=recent\|highest\|lowest`, `page` (1-9999) |
+| `GET /api/products/[id]/reviews/summary` | `{ average, count, canReview, myReview }` (`canReview`/`myReview` need a session) |
+| `PUT /api/products/[id]/reviews/mine`, `DELETE …/mine` | Create/edit (`{ rating: 1-5, comment? }`) or delete the member's own review |
+| `GET /api/reviews/highlights` | `{ reviews }` — up to 8 latest 4-5★ reviews with a comment, for the home page; cached 5 minutes |
 | `POST /api/auth/request-otp`, `verify-otp`, `register`; `GET /api/auth/me`; `POST /api/auth/logout` | OTP sign-in; sets/clears the `ansar_session` cookie |
 | `GET /api/shipping-zones` | Delivery zones (when shipping is enabled in web-api) |
 | `POST /api/checkout/preview` | Totals: discounts, coupon, shipping |
@@ -64,6 +68,14 @@ Invalid input returns 400, unknown ids 404, a signed-out caller 401, and web-api
 - Cart and favorites are saved in this browser and re-checked against the live catalog on load and again at checkout.
 - Checkout needs a signed-in member. web-api prices every order itself; the browser never sends a price.
 - Payment uses the Moyasar form on `/checkout/pay`; `/checkout/result` confirms the outcome with web-api. Orders are listed on `/orders`.
+
+## Reviews
+
+- The product dialog shows the average rating, the count and the published reviews (newest / highest / lowest, 5 at a time). Catalog cards show `★ average (count)` once a product has a review; the catalog cache means a new review can take up to 60 seconds to reach the cards.
+- Only signed-in members who bought the product (a FINISHED, non-refunded order) can write a review — web-api decides, the storefront only shows its answer. One review per member per product; it can be edited or deleted unless the admin hid it.
+- The home page shows "آراء عملائنا": up to 8 of the latest published 4-5★ reviews that have a comment (web-api `GET /api/v2/store/reviews/highlights`, cached here for 5 minutes). The section is hidden when there are none or web-api is unreachable; each card opens its product.
+- Comments are optional, 5-1000 characters, normalized and validated the same way as web-api. Reviews are moderated in the web-api admin dashboard (Store → Reviews).
+- Error codes: `invalid_input`, `unauthenticated`, `forbidden`, `not_verified_buyer`, `review_hidden`, `not_found`, `comment_too_short`, `comment_too_long`, `comment_invalid_chars`, `rate_limited`, `upstream_unavailable`.
 
 ## Payment methods
 

@@ -49,6 +49,22 @@ test("toProduct falls back to the legacy image, then the placeholder, and reject
   assert.equal(toProduct(null), null);
 });
 
+test("toProduct maps original_price only when it is above the price", () => {
+  assert.equal(toProduct({ ...row, original_price: "299.00" })?.originalPrice, 299);
+  assert.equal(toProduct({ ...row, original_price: 300 })?.originalPrice, 300);
+  // absent, null, equal, inverted -> no key at all
+  for (const original_price of [undefined, null, "249.00", "200"]) {
+    const product = toProduct({ ...row, original_price });
+    assert.ok(product, `row with original_price=${String(original_price)} must still map`);
+    assert.equal("originalPrice" in product, false, `original_price=${String(original_price)}`);
+  }
+});
+
+test("toProduct rejects a row whose original_price is not money", () => {
+  assert.equal(toProduct({ ...row, original_price: "abc" }), null);
+  assert.equal(toProduct({ ...row, original_price: "-5" }), null);
+});
+
 test("stripHtml returns plain text", () => {
   assert.equal(stripHtml("a<br>b<script>x</script>&lt;i&gt;"), "a\nbx<i>");
   assert.equal(stripHtml(""), "");
@@ -69,4 +85,13 @@ test("toOrderSummary maps an order row", () => {
     items: [{ name: "قميص", image: "http://api.test/uploads/front.jpg", quantity: 1, unitPrice: 294.5, total: 294.5, options: ["المقاس: XXL"] }],
   });
   assert.equal(toOrderSummary({ id: "x" }), null);
+});
+
+test("toProduct carries the review rating only when the product has reviews", () => {
+  assert.deepEqual(toProduct({ ...row, avg_rating: 4.5, reviews_count: 12 })?.rating, { average: 4.5, count: 12 });
+  assert.equal("rating" in (toProduct({ ...row, avg_rating: null, reviews_count: 0 }) ?? {}), false);
+  assert.equal("rating" in (toProduct(row) ?? {}), false);
+  const invalid = toProduct({ ...row, avg_rating: 9, reviews_count: 1 });
+  assert.notEqual(invalid, null);
+  assert.equal("rating" in (invalid ?? {}), false);
 });

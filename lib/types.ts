@@ -5,6 +5,7 @@ export type Product = {
   image: string; images: string[]; colors: { name: string; value: string }[];
   optionGroups: ProductOptionGroup[]; badge?: string; description: string; details: string[];
   productType: "REGULAR" | "INVITATION_TICKET" | "INVITATION_TICKET_BOOK";
+  rating?: ProductRating;
 };
 export type SiteContent = {
   name: string; season: string;
@@ -25,3 +26,9 @@ export type PaymentState = { paymentId: string; status: "INITIATED" | "PENDING" 
 export type OrderSummary = { id: string; createdAt: string; total: number; paymentStatus: "UNPAID" | "PAID" | "FAILED" | "REFUNDED";
   fulfillmentStatus: "PENDING" | "PREPARING" | "SHIPPED" | "FINISHED" | "CANCELLED"; trackingNumber: string | null; deliveryAddress: string;
   items: { name: string; image: string | null; quantity: number; unitPrice: number; total: number; options: string[] }[] };
+export type ProductRating = { average: number; count: number };                     // only set when the product has ≥1 published review
+export type ReviewSort = "recent" | "highest" | "lowest";
+export type Review = { id: string; rating: number; comment: string | null; reviewerName: string | null; createdAt: string; updatedAt: string; isMine: boolean };
+export type MyReview = { id: string; rating: number; comment: string | null; status: "PUBLISHED" | "HIDDEN"; createdAt: string; updatedAt: string };
+export type ReviewSummary = { average: number | null; count: number; canReview: boolean; myReview: MyReview | null };
+export type ReviewPage = { reviews: Review[]; page: number; pages: number; total: number };

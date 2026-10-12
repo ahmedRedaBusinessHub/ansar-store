@@ -36,6 +36,7 @@ export async function upstream<T>(path: string, init: { method?: string; body?: 
   } catch {
     throw new UpstreamError(503, "UPSTREAM_UNAVAILABLE");
   }
+  if (response.status === 204) return { data: null as T, meta: null };
   const json = (await response.json().catch(() => null)) as Envelope<T> | null;
   if (!response.ok || !json || (json.error !== null && json.error !== undefined)) {
     const code = typeof json?.error?.code === "string" ? json.error.code : `HTTP_${response.status}`;

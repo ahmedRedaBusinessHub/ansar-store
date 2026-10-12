@@ -7,6 +7,7 @@
     "sharp": "0.35.5"
   },
   "scripts": {
+    "links:generate": "node scripts/generate-app-links.mjs",
     "dev": "next dev --hostname 127.0.0.1 --port 3017",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1 --port 3017",

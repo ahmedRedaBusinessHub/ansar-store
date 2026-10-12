@@ -1,10 +1,12 @@
 "use client";
 
 import { useId, useState } from "react";
-import { ArrowLeft, Heart, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-import type { CartItem, Product, SiteContent } from "../lib/types";
+import { ArrowLeft, Heart, Minus, Plus, ShoppingBag, Trash2, ZoomIn, ChevronRight, ChevronLeft } from "lucide-react";
+import type { CartItem, Product, SessionUser, SiteContent } from "../lib/types";
 import { cartKey, MAX_PER_PRODUCT, productPriceRange, unitPrice, validOptionIds } from "../lib/cart";
+import { offerFor } from "../lib/offer";
 import { CloseButton, Dialog } from "./dialog";
+import { ProductReviews } from "./product-reviews";
 import "./shop-dialogs.css";
 
 const money = (value: number) => `${new Intl.NumberFormat("ar-SA", { maximumFractionDigits: 2 }).format(value)} ر.س`;
@@ -12,21 +14,25 @@ const money = (value: number) => `${new Intl.NumberFormat("ar-SA", { maximumFrac
 type ProductDialogProps = {
   product: Product | null; onClose: () => void; onAdd: (id: string, optionIds: string[]) => boolean;
   wishlist: string[]; onToggleWishlist: (id: string) => void;
+  user: SessionUser | null; onRequireSignIn: () => void;
 };
 
 export function ProductDialog(props: ProductDialogProps) {
   return props.product ? <ProductContent key={props.product.id} {...props} product={props.product} /> : null;
 }
 
-function ProductContent({ product, onClose, onAdd, wishlist, onToggleWishlist }: ProductDialogProps & { product: Product }) {
+function ProductContent({ product, onClose, onAdd, wishlist, onToggleWishlist, user, onRequireSignIn }: ProductDialogProps & { product: Product }) {
   const titleId = useId();
   const [choices, setChoices] = useState<Record<string, string>>({});
   const [photo, setPhoto] = useState(product.image);
   const [message, setMessage] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const optionIds = Object.values(choices);
   const complete = validOptionIds(product, optionIds) !== null;
   const priceRange = productPriceRange(product);
   const displayedPrice = complete ? unitPrice(product, optionIds) : priceRange.minimum;
+  // Follows the chosen options: the struck original moves by the same extras.
+  const offer = offerFor(product, displayedPrice);
   const missing = product.optionGroups.filter((group) => group.required && !choices[group.id]).map((group) => group.name);
   const selected = wishlist.includes(product.id);
 
@@ -41,18 +47,37 @@ function ProductContent({ product, onClose, onAdd, wishlist, onToggleWishlist }:
     setMessage("");
   };
 
-  return <Dialog open onClose={onClose} titleId={titleId} className="sd-product">
-    <div className="sd-product-close"><CloseButton onClose={onClose} /></div>
-    <div className="sd-product-grid">
-      <div className="sd-gallery">
-        <div className="sd-main-photo"><img src={photo} alt={product.name} /></div>
+  const currentIndex = product.images.indexOf(photo);
+  const hasMultiple = product.images.length > 1;
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!hasMultiple) return;
+    setPhoto(product.images[(currentIndex - 1 + product.images.length) % product.images.length]);
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!hasMultiple) return;
+    setPhoto(product.images[(currentIndex + 1) % product.images.length]);
+  };
+
+  return <>
+    <Dialog open onClose={onClose} titleId={titleId} className="sd-product">
+      <div className="sd-product-close"><CloseButton onClose={onClose} /></div>
+      <div className="sd-product-grid">
+        <div className="sd-gallery">
+          <div className="sd-main-photo">
+            <img src={photo} alt={product.name} onClick={() => setIsFullscreen(true)} style={{ cursor: "zoom-in" }} />
+            <button type="button" className="sd-zoom" aria-label="عرض بملء الشاشة" onClick={() => setIsFullscreen(true)}><ZoomIn size={22} /></button>
+          </div>
         {product.images.length > 1 && <div className="sd-thumbnails" aria-label="صور المنتج">
           {product.images.map((src, index) => <button key={src} type="button" aria-label={`عرض صورة المنتج ${index + 1}`} aria-pressed={src === photo} onClick={() => setPhoto(src)}><img src={src} alt="" /></button>)}
         </div>}
       </div>
       <div className="sd-product-info">
         <h2 id={titleId}>{product.name}</h2>
-        <div className="sd-price">{!complete && priceRange.variable && <small>يبدأ من</small>}<strong>{money(displayedPrice)}</strong></div>
+        <div className="sd-price">{!complete && priceRange.variable && <small>يبدأ من</small>}<strong>{money(displayedPrice)}</strong>{offer && <><del aria-label={`السعر قبل العرض ${money(offer.original)}`}>{money(offer.original)}</del><em className="sd-offer-badge">وفّر {offer.percentOff}٪</em></>}</div>
         {product.description && <p className="sd-description" style={{ whiteSpace: "pre-line" }}>{product.description}</p>}
         {product.optionGroups.map((group) => <fieldset key={group.id} className="sd-size-field">
           <legend>{group.name} <span>{group.options.find((option) => option.id === choices[group.id])?.label ?? (group.required ? "اختر" : "اختياري")}</span></legend>
@@ -72,8 +97,22 @@ function ProductContent({ product, onClose, onAdd, wishlist, onToggleWishlist }:
         </div>
         <p className="sd-message" role="status">{message || (missing.length > 0 ? `اختر: ${missing.join("، ")}` : "")}</p>
       </div>
-    </div>
-  </Dialog>;
+      </div>
+      <ProductReviews productId={product.id} user={user} onRequireSignIn={onRequireSignIn} />
+    </Dialog>
+    {isFullscreen && (
+      <Dialog open onClose={() => setIsFullscreen(false)} titleId={`${titleId}-fs`} className="sd-fullscreen">
+        <div className="sd-fs-close"><CloseButton onClose={() => setIsFullscreen(false)} /></div>
+        <div className="sd-fs-content" onClick={() => setIsFullscreen(false)}>
+          <img src={photo} alt={product.name} onClick={(e) => e.stopPropagation()} />
+          {hasMultiple && <>
+            <button type="button" className="sd-fs-nav sd-fs-prev" aria-label="السابق" onClick={handlePrev}><ChevronRight size={32} /></button>
+            <button type="button" className="sd-fs-nav sd-fs-next" aria-label="التالي" onClick={handleNext}><ChevronLeft size={32} /></button>
+          </>}
+        </div>
+      </Dialog>
+    )}
+  </>;
 }
 
 type CartDialogProps = {

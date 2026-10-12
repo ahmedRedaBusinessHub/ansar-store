@@ -68,3 +68,10 @@ test("isJsonRequest only accepts application/json bodies", () => {
   assert.equal(isJsonRequest(new Request("http://x", { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded" } })), false);
   assert.equal(isJsonRequest(new Request("http://x", { method: "POST" })), false);
 });
+
+test("upstream treats 204 No Content as success with null data", async () => {
+  const fetchMock = mock.method(globalThis, "fetch", async () => new Response(null, { status: 204 }));
+  try {
+    assert.deepEqual(await upstream("/api/v2/store/x/reviews/mine", { method: "DELETE", token: "tok" }), { data: null, meta: null });
+  } finally { fetchMock.mock.restore(); }
+});

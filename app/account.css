@@ -3,7 +3,7 @@
 .acc-field input,.acc-field textarea{font:inherit;font-weight:400;padding:12px 14px;border:1px solid var(--line,#e4e7e2);border-radius:4px;background:#fff;color:var(--ink,#17251e)}
 .acc-field textarea{min-height:96px;resize:vertical}
 .acc-field input:focus-visible,.acc-field textarea:focus-visible{outline:2px solid var(--green,#17533d);outline-offset:2px}
-.acc-row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.acc-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
 .acc-row>*{flex:1;min-width:0}
 .acc-error{color:#a3261b;font-size:14px;margin:0}
 .acc-note{color:var(--muted,#68726b);font-size:13px;margin:0}
