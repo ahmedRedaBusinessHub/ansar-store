@@ -12,11 +12,12 @@ export async function fetchTicketedMatches(): Promise<TicketedMatch[]> {
 /**
  * null for an unknown or unpublished match. Sales info is read first: it is the
  * call that answers 404 for drafts, so a draft's details are never fetched.
+ * Pass `revalidate` from ISR pages; route handlers omit it to read fresh.
  */
-export async function fetchMatchDetail(id: string): Promise<MatchDetail | null> {
+export async function fetchMatchDetail(id: string, cache: { revalidate?: number } = {}): Promise<MatchDetail | null> {
   try {
-    const sales = await upstream<unknown>(`/api/v2/matches/${id}/sales-info`);
-    const match = await upstream<unknown>(`/api/v2/matches/${id}`);
+    const sales = await upstream<unknown>(`/api/v2/matches/${id}/sales-info`, cache);
+    const match = await upstream<unknown>(`/api/v2/matches/${id}`, cache);
     return toMatchDetail(match.data, sales.data);
   } catch (error) {
     if (error instanceof UpstreamError && (error.status === 404 || error.status === 400)) return null;

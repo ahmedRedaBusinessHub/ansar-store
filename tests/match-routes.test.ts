@@ -4,6 +4,8 @@ import { NextRequest } from "next/server";
 import { GET as list } from "../app/api/matches/route";
 import { GET as detail } from "../app/api/matches/[id]/route";
 import { GET as sections } from "../app/api/matches/[id]/sections/route";
+import { fetchMatchDetail } from "../lib/match-data";
+import { readStore, resetCatalogCache } from "../lib/catalog";
 
 process.env.ANSAR_API_BASE_URL = "http://api.test";
 const M = "11111111-1111-4111-8111-111111111111";
@@ -79,6 +81,28 @@ test("an unpublished match never calls the detail endpoint", async () => {
     assert.equal(response.status, 404);
     assert.deepEqual(api.calls, [`GET /api/v2/matches/${M}/sales-info`]);
   } finally { api.restore(); }
+});
+
+test("the ISR page read uses the data cache; the API route stays no-store", async () => {
+  const inits: RequestInit[] = [];
+  const fetchMock = mock.method(globalThis, "fetch", async (url: string, init: RequestInit) => {
+    inits.push(init);
+    return Response.json({ data: new URL(url).pathname.endsWith("/sales-info") ? salesRow : matchRow, meta: null, error: null });
+  });
+  try {
+    assert.notEqual(await fetchMatchDetail(M, { revalidate: 60 }), null);
+    resetCatalogCache();
+    await readStore({ revalidate: 60 });
+    assert.equal(inits.length, 3);
+    // A no-store fetch inside a `revalidate` page throws DYNAMIC_SERVER_USAGE → bare 500.
+    for (const init of inits) {
+      assert.equal(init.cache, undefined);
+      assert.deepEqual((init as { next?: unknown }).next, { revalidate: 60 });
+    }
+    inits.length = 0;
+    await detail(get(`/api/matches/${M}`), ctx(M));
+    for (const init of inits) assert.equal(init.cache, "no-store");
+  } finally { fetchMock.mock.restore(); }
 });
 
 test("a malformed id is 404 without any upstream call", async () => {

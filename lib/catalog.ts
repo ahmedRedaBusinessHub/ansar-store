@@ -13,13 +13,16 @@ export function resetCatalogCache(): void {
   cache = null;
 }
 
-/** Every REGULAR product from web-api. Invitation tickets are app-only and never sold on the web. */
-export async function fetchProducts(): Promise<Product[]> {
+/**
+ * Every REGULAR product from web-api. Invitation tickets are app-only and never sold on the web.
+ * ISR pages pass `revalidate` (see UpstreamInit); route handlers and checkout omit it.
+ */
+export async function fetchProducts(fetchCache: { revalidate?: number } = {}): Promise<Product[]> {
   if (cache && Date.now() - cache.at < CACHE_MS) return cache.products;
   try {
     const products: Product[] = [];
     for (let page = 1; page <= MAX_PAGES; page++) {
-      const { data, meta } = await upstream<unknown[]>(`/api/v2/store?page=${page}&perPage=${PER_PAGE}&sort=created_at&order=desc`);
+      const { data, meta } = await upstream<unknown[]>(`/api/v2/store?page=${page}&perPage=${PER_PAGE}&sort=created_at&order=desc`, fetchCache);
       for (const row of Array.isArray(data) ? data : []) {
         const product = toProduct(row);
         if (product && product.productType === "REGULAR") products.push(product);
@@ -35,8 +38,8 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 }
 
-export async function readStore(): Promise<StoreData> {
-  const [site, products] = await Promise.all([readSite(), fetchProducts()]);
+export async function readStore(fetchCache: { revalidate?: number } = {}): Promise<StoreData> {
+  const [site, products] = await Promise.all([readSite(), fetchProducts(fetchCache)]);
   return { ...site, categories: [{ id: "all", label: "جميع المنتجات" }], products };
 }
 

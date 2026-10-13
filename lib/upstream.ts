@@ -35,6 +35,12 @@ export type UpstreamInit = {
   token?: string | null;
   /** Visitor IP. Forwarded only when STOREFRONT_PROXY_SECRET (≥32 chars) is configured. */
   clientIp?: string | null;
+  /**
+   * Seconds to keep the response in the Next data cache. Required for reads made while
+   * rendering an ISR page: a no-store fetch there throws DYNAMIC_SERVER_USAGE (bare 500).
+   * Omitted = no-store, for route handlers and anything per-visitor.
+   */
+  revalidate?: number;
 };
 
 const MIN_PROXY_SECRET_LENGTH = 32;
@@ -58,7 +64,7 @@ export async function upstreamRaw(path: string, init: UpstreamInit = {}, timeout
       method: init.method ?? "GET",
       headers: upstreamHeaders(init),
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
-      cache: "no-store",
+      ...(init.revalidate === undefined ? { cache: "no-store" as const } : { next: { revalidate: init.revalidate } }),
       signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (error) {
