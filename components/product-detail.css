@@ -1,0 +1,15 @@
+/* Product page. Reuses the dialog's .sd-* styles (shop-dialogs.css) and undoes the modal sizing. */
+.pd-main{max-width:1180px;margin:0 auto;padding:24px 20px 56px}
+.pd-breadcrumb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:16px;font-size:13px;color:var(--muted,#68726b)}
+.pd-breadcrumb a{color:inherit;text-decoration:underline;text-underline-offset:4px}
+.pd-breadcrumb [aria-current]{color:var(--ink,#17251e);font-weight:700;overflow-wrap:anywhere}
+.pd-product.sd-dialog{position:relative;width:100%;max-width:none;max-height:none;overflow:visible;margin:0;box-shadow:none;border:1px solid var(--line,#e4e7e2)}
+.pd-product .sd-product-info{padding:32px 28px 28px}
+.pd-product h1{margin:0;font-size:28px;line-height:1.5}
+.pd-back{margin:28px 0 0}
+.pd-back a{display:inline-flex;align-items:center;gap:8px;color:var(--green,#17533d);font-weight:700}
+.pd-banner{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;border:1px solid var(--line,#e4e7e2);border-radius:8px;background:#f0f5f0;font-size:14px}
+.pd-banner span{flex:1;min-width:0}
+.pd-banner a{flex-shrink:0;padding:8px 14px;border-radius:4px;background:var(--green,#17533d);color:#fff;font-weight:700}
+.pd-banner button{flex-shrink:0;display:inline-flex;width:36px;height:36px;align-items:center;justify-content:center}
+@media(max-width:640px){.pd-main{padding:16px 12px 40px}.pd-product .sd-product-info{padding:20px 16px}.pd-product h1{font-size:23px}}

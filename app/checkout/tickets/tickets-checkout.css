@@ -1,0 +1,4 @@
+.co-timer{display:flex;align-items:center;gap:8px;margin:4px 0 12px;padding:10px 14px;border-radius:6px;background:#fff7e6;color:#7a5512;font-size:14px}
+.co-timer b{font-size:16px}
+.tk-result{display:grid;gap:16px}
+.tk-result .tk-card{border-color:var(--line,#e4e7e2)}

@@ -63,14 +63,25 @@ const intentSchema = z.object({
   sdk_config: z.object({ metadata: z.object({ payment_id: z.string(), entity_type: z.string(), entity_id: z.string() }) }),
 });
 
-export async function createIntent(token: string, orderId: string): Promise<NonNullable<CheckoutResult["payment"]>> {
-  const { data } = await upstream<unknown>("/api/v2/payments/create-intent", { method: "POST", token, body: { entity_type: "ORDER", entity_id: orderId } });
+export async function createEntityIntent(token: string, entityType: "ORDER" | "MATCH_BOOKING", entityId: string): Promise<NonNullable<CheckoutResult["payment"]>> {
+  const { data } = await upstream<unknown>("/api/v2/payments/create-intent", { method: "POST", token, body: { entity_type: entityType, entity_id: entityId } });
   const intent = intentSchema.parse(data);
   return { paymentId: intent.payment_id, givenId: intent.given_id, amountHalalah: intent.amount, currency: intent.currency, description: intent.description, metadata: intent.sdk_config.metadata };
+}
+
+export async function createIntent(token: string, orderId: string): Promise<NonNullable<CheckoutResult["payment"]>> {
+  return createEntityIntent(token, "ORDER", orderId);
 }
 
 export const paymentStateSchema = z.object({
   status: z.enum(["INITIATED", "PENDING", "PAID", "FAILED", "REFUNDED", "REFUNDING"]),
   entity_type: z.literal("ORDER"),
+  entity_id: z.string(),
+});
+
+/** Payment state for match bookings (web-match-tickets). Order payments never match this schema. */
+export const matchPaymentStateSchema = z.object({
+  status: z.enum(["INITIATED", "PENDING", "PAID", "FAILED", "REFUNDED", "REFUNDING"]),
+  entity_type: z.literal("MATCH_BOOKING"),
   entity_id: z.string(),
 });

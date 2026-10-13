@@ -1,0 +1,33 @@
+/* Home-page app download section (components/app-promo.tsx). Sand surface taken from the app icon itself. */
+.app-promo{--sand:oklch(0.925 0.032 86);--sand-deep:oklch(0.84 0.05 84);--card:oklch(0.985 0.007 92);background:var(--sand);overflow:hidden}
+.app-promo-inner{display:grid;grid-template-columns:minmax(0,600px) auto;justify-content:center;align-items:center;gap:clamp(40px,7vw,120px);padding-block:clamp(48px,7vw,88px)}
+.app-promo-content{min-width:0}
+.app-promo .section-kicker{color:oklch(0.47 0.05 150)}
+.app-promo h2{font-size:clamp(32px,3.6vw,50px);font-weight:700;line-height:1.3;color:var(--green)}
+.app-promo-lede{font-size:clamp(13px,1.1vw,15px);color:oklch(0.4 0.03 150);margin-top:14px}
+.app-promo-features{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--sand-deep)}
+.app-promo-features li{display:flex;align-items:center;gap:12px;padding-block:13px;border-bottom:1px solid var(--sand-deep);font-size:13px;color:var(--ink)}
+.app-promo-features svg{flex-shrink:0;width:19px;height:19px;color:var(--green);stroke-width:1.6}
+.app-promo-badges{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:30px}
+.app-badge{display:inline-flex;border-radius:8px;transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.app-badge:hover{transform:translateY(-2px)}
+.app-badge:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.app-badge img{display:block;height:44px;width:auto}
+/* Google's PNG carries transparent padding around the badge: enlarge it so the visible badge matches Apple's, then cancel the padding. */
+.app-badge-android img{height:66px;margin:-11px}
+/* The real app icon is the section's image; the QR sticks to its corner like a tag. */
+.app-promo-visual{position:relative;padding:0 0 56px 56px}
+.app-promo-icon{display:block;width:clamp(176px,17vw,232px);height:auto;border-radius:22.5%;box-shadow:0 2px 3px oklch(0.3 0.06 150 / .12),0 28px 60px -18px oklch(0.3 0.08 150 / .45)}
+.app-promo-qr{position:absolute;left:0;bottom:0;margin:0;display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;background:var(--card);border-radius:12px;box-shadow:0 14px 34px -14px oklch(0.3 0.06 150 / .4)}
+.app-promo-qr img{display:block;width:96px;height:96px}
+.app-promo-qr figcaption{font-size:11px;line-height:1.7;color:oklch(0.42 0.03 150)}
+@media(max-width:800px){
+  .app-promo-inner{grid-template-columns:minmax(0,1fr);justify-content:stretch;gap:0}
+  .app-promo-visual{grid-row:1;padding:0;margin-bottom:24px}
+  .app-promo-icon{width:84px;border-radius:22.5%;box-shadow:0 14px 30px -14px oklch(0.3 0.08 150 / .5)}
+  .app-promo-qr{display:none}
+}
+@media(max-width:600px){.app-promo h2{font-size:30px}.app-promo-features li{font-size:12px;padding-block:11px}.app-promo-badges{margin-top:24px}.app-badge img{height:40px}.app-badge-android img{height:60px;margin:-10px}}
+@media(prefers-reduced-motion:reduce){.app-badge{transition:none}.app-badge:hover{transform:none}}
+/* .story keeps a top margin to separate it from white sections; against the sand band that margin shows as a white strip. */
+.app-promo+.story{margin-top:0}

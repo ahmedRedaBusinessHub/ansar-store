@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 const script = resolve("scripts/generate-app-links.mjs");
 const fingerprint = Array(32).fill("AA").join(":");
 
-test("association generator scopes this app to /open", () => {
+test("association generator scopes this app to /open and product pages", () => {
   const cwd = mkdtempSync(join(tmpdir(), "ansar-links-"));
   try {
     const env = { ...process.env, ANSAR_APPLE_TEAM_ID: "ABCDE12345", ANSAR_PLAY_SHA256: fingerprint };
@@ -17,7 +17,7 @@ test("association generator scopes this app to /open", () => {
     const dir = join(cwd, "public/.well-known");
     const apple = JSON.parse(readFileSync(join(dir, "apple-app-site-association"), "utf8"));
     const android = JSON.parse(readFileSync(join(dir, "assetlinks.json"), "utf8"));
-    assert.deepEqual(apple.applinks.details, [{ appID: "ABCDE12345.com.alansar", paths: ["/open"] }]);
+    assert.deepEqual(apple.applinks.details, [{ appID: "ABCDE12345.com.alansar", paths: ["/open", "/products/*"] }]);
     assert.equal(android[0].target.package_name, "sa.alansar");
     assert.deepEqual(android[0].target.sha256_cert_fingerprints, [fingerprint]);
   } finally { rmSync(cwd, { recursive: true, force: true }); }

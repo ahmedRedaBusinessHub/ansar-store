@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { upstream } from "@/lib/upstream";
+import { clientIpFrom } from "@/lib/client-ip";
 import { isJsonRequest, setSessionCookie } from "@/lib/session";
 import { authFailure, emailSchema, fail, loadSessionUser, phoneSchema, readBody } from "../shared";
 
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return fail(400, "invalid_input");
   try {
     const { data } = await upstream<{ token?: unknown; isNewUser?: unknown; pending_deletion?: unknown }>(
-      "/api/v2/auth/phone/verify-otp", { method: "POST", body: parsed.data });
+      "/api/v2/auth/phone/verify-otp", { method: "POST", body: parsed.data, clientIp: clientIpFrom(request.headers) });
     // Accounts pending deletion get a recovery-only token; recovery happens in the mobile app.
     if (data?.pending_deletion === true) return fail(403, "account_inactive");
     if (typeof data?.token !== "string") {

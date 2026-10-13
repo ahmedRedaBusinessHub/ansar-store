@@ -8,7 +8,8 @@ if (!/^([A-F0-9]{2}:){31}[A-F0-9]{2}$/.test(fingerprint ?? "")) throw new Error(
 
 const dir = resolve("public/.well-known");
 await mkdir(dir, { recursive: true });
-const apple = { applinks: { apps: [], details: [{ appID: `${teamId}.com.alansar`, paths: ["/open"] }] } };
+// Product paths ship in the same native release as /open (spec 2026-10-12 D8). Never add checkout or payment paths.
+const apple = { applinks: { apps: [], details: [{ appID: `${teamId}.com.alansar`, paths: ["/open", "/products/*"] }] } };
 const android = [{
   relation: ["delegate_permission/common.handle_all_urls"],
   target: { namespace: "android_app", package_name: "sa.alansar", sha256_cert_fingerprints: [fingerprint] },

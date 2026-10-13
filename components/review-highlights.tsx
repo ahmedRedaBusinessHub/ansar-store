@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowUpLeft, Quote } from "lucide-react";
+import Link from "next/link";
 import type { Product } from "../lib/types";
 import type { ReviewHighlight } from "../lib/review-highlights";
 import { formatReviewDate, reviewerLabel } from "../lib/reviews";
@@ -9,9 +10,9 @@ import { Stars } from "./review-parts";
 import "./product-reviews.css";
 import "./review-highlights.css";
 
-type ReviewHighlightsProps = { products: Product[]; onOpenProduct: (product: Product) => void };
+type ReviewHighlightsProps = { products: Product[] };
 
-export function ReviewHighlights({ products, onOpenProduct }: ReviewHighlightsProps) {
+export function ReviewHighlights({ products }: ReviewHighlightsProps) {
   const [highlights, setHighlights] = useState<ReviewHighlight[]>([]);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export function ReviewHighlights({ products, onOpenProduct }: ReviewHighlightsPr
       <Stars value={review.rating} size={15} />
       <p className="rh-comment">{review.comment}</p>
       <div className="rh-meta"><b>{reviewerLabel(review.reviewerName)}</b><time dateTime={review.createdAt}>{formatReviewDate(review.createdAt)}</time></div>
-      <button type="button" className="rh-product" aria-label={`عرض ${product.name}`} onClick={() => onOpenProduct(product)}><img src={product.image} alt="" loading="lazy" /><span>{product.name}</span><ArrowUpLeft size={16} aria-hidden="true" /></button>
+      <Link className="rh-product" href={`/products/${product.id}`} aria-label={`عرض ${product.name}`}><img src={product.image} alt="" loading="lazy" /><span>{product.name}</span><ArrowUpLeft size={16} aria-hidden="true" /></Link>
     </li>)}</ul>
   </section>;
 }

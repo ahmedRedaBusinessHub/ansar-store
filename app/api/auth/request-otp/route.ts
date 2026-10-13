@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { upstream } from "@/lib/upstream";
+import { clientIpFrom } from "@/lib/client-ip";
 import { isJsonRequest } from "@/lib/session";
 import { authFailure, emailSchema, fail, phoneSchema, readBody } from "../shared";
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
   const parsed = schema.safeParse(await readBody(request));
   if (!parsed.success) return fail(400, "invalid_input");
   try {
-    const { data } = await upstream<{ requiresEmail?: unknown }>("/api/v2/auth/phone/request-otp", { method: "POST", body: parsed.data });
+    const { data } = await upstream<{ requiresEmail?: unknown }>("/api/v2/auth/phone/request-otp", { method: "POST", body: parsed.data, clientIp: clientIpFrom(request.headers) });
     return NextResponse.json({ ok: true, requiresEmail: data?.requiresEmail === true });
   } catch (error) {
     return authFailure(error);
