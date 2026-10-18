@@ -1,0 +1,26 @@
+.ev-page { padding-block: 32px 64px; }
+.ev-intro { color: var(--muted, #68726b); max-width: 60ch; }
+.ev-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-top: 24px; }
+.ev-card { display: flex; flex-direction: column; border: 1px solid var(--line, #e4e7e2); border-radius: 16px; overflow: hidden; color: inherit; text-decoration: none; background: var(--surface, #fff); }
+.ev-card img, .ev-card-fallback { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--line, #e4e7e2); }
+.ev-card-body { padding: 14px 16px 18px; display: grid; gap: 6px; }
+.ev-card-body h2 { font-size: 1.1rem; margin: 0; }
+.ev-card-meta { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.ev-badge { font-size: .8rem; padding: 2px 10px; border-radius: 999px; background: var(--line, #f0f0f0); margin-inline-start: 8px; }
+.ev-detail { max-width: 760px; margin-inline: auto; display: grid; gap: 12px; }
+.ev-hero { width: 100%; border-radius: 16px; aspect-ratio: 16 / 9; object-fit: cover; }
+.ev-description { white-space: pre-line; line-height: 1.8; }
+.ev-book { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--line, #e4e7e2); border-radius: 16px; }
+.ev-stepper { display: inline-flex; align-items: center; gap: 12px; }
+.ev-stepper button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line, #ddd); background: transparent; display: grid; place-items: center; }
+.ev-stepper output { min-width: 2ch; text-align: center; font-weight: 700; }
+.ev-add { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.ev-note { color: var(--muted, #68726b); }
+.ev-error { color: var(--danger, #b42318); display: grid; gap: 4px; }
+.ev-cancel { display: grid; gap: 8px; }
+.ev-cancel-btn { justify-self: start; }
+.ev-breadcrumb, .mp-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 13px; color: var(--muted, #68726b); }
+.ev-breadcrumb a, .mp-breadcrumb a { color: inherit; text-decoration: underline; text-underline-offset: 4px; }
+.ev-breadcrumb [aria-current], .mp-breadcrumb [aria-current] { color: var(--ink, #17251e); font-weight: 700; }
+.ev-back, .mp-back { margin: 28px 0 0; }
+.ev-back a, .mp-back a { display: inline-flex; align-items: center; gap: 8px; color: var(--green, #17533d); font-weight: 700; }

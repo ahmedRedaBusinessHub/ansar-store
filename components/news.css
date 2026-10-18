@@ -1,0 +1,44 @@
+.nw-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.nw-card{min-width:0}
+.nw-card-link{display:flex;flex-direction:column;height:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;transition:border-color .2s,box-shadow .2s}
+.nw-card-link:hover{border-color:var(--green);box-shadow:0 8px 24px #112f2512}
+.nw-card-media{aspect-ratio:16/10;background:var(--paper);display:grid;place-items:center;overflow:hidden}
+.nw-card-media>img{width:100%;height:100%;object-fit:cover}
+.nw-card-media>img.nw-card-crest{width:56px;height:66px;object-fit:contain;opacity:.45}
+.nw-card-body{display:flex;flex-direction:column;gap:8px;padding:18px;min-width:0}
+.nw-card-body time{font-size:12px;color:var(--muted)}
+.nw-card-body h3{font-size:16px;line-height:1.7;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nw-card-body p{font-size:13px;line-height:1.9;color:var(--muted);overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nw-hero{display:grid;grid-template-columns:1.3fr 1fr;margin:24px 0 32px;border-radius:8px;overflow:hidden;background:var(--green);color:#fff;min-height:340px}
+.nw-hero>img{width:100%;height:100%;min-height:340px;object-fit:cover}
+.nw-hero-body{display:flex;flex-direction:column;justify-content:center;gap:12px;padding:36px;min-width:0}
+.nw-hero-body h2{font-size:28px;line-height:1.6;overflow-wrap:anywhere}
+.nw-hero-body p{color:#dbe6df;line-height:1.9}
+.nw-hero-body time{font-size:12px;color:#e7d5ae}
+.nw-badge{align-self:flex-start;display:inline-block;background:var(--gold);color:#112f25;font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px}
+.nw-ticker{display:flex;align-items:center;gap:14px;margin-top:16px;padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--paper);overflow:hidden}
+.nw-ticker-label{flex-shrink:0;font-size:12px;font-weight:700;color:var(--green)}
+.nw-ticker-track{flex:1;min-width:0;overflow:hidden}
+.nw-ticker-run{display:flex;width:max-content;animation:nw-ticker 45s linear infinite}
+.nw-ticker-run ul{display:flex;gap:40px;margin:0;padding:0;padding-inline-end:40px;list-style:none}
+.nw-ticker-run a{font-size:13px;white-space:nowrap}
+.nw-ticker-run a:hover,.nw-ticker-run a:focus-visible{color:var(--green);text-decoration:underline}
+.nw-ticker:hover .nw-ticker-run,.nw-ticker:focus-within .nw-ticker-run{animation-play-state:paused}
+@keyframes nw-ticker{to{transform:translateX(50%)}}
+@media(prefers-reduced-motion:reduce){.nw-ticker-run{animation:none;width:auto}.nw-ticker-run ul[aria-hidden]{display:none}.nw-ticker-run ul{flex-wrap:wrap;row-gap:6px}.nw-ticker-run a{white-space:normal}}
+.nw-article{max-width:780px;margin-inline:auto}
+.nw-article header{display:flex;flex-direction:column;gap:10px;margin:16px 0 20px}
+.nw-article h1{font-size:32px;line-height:1.6}
+.nw-article-meta{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted)}
+.nw-article-meta span{display:inline-flex;align-items:center;gap:6px}
+.nw-article-image{width:100%;max-height:520px;object-fit:cover;border-radius:8px;margin-bottom:24px}
+.nw-body{font-size:16px;line-height:2.1;overflow-wrap:anywhere}
+.nw-body p,.nw-body ul,.nw-body ol,.nw-body blockquote,.nw-body figure{margin:0 0 18px}
+.nw-body h2,.nw-body h3,.nw-body h4{margin:28px 0 12px;line-height:1.6}
+.nw-body img{height:auto;border-radius:6px;margin:12px auto}
+.nw-body a{color:var(--green);text-decoration:underline;text-underline-offset:4px}
+.nw-body blockquote{border-inline-start:3px solid var(--gold);padding-inline-start:16px;color:var(--muted)}
+.nw-related{margin-top:56px;padding-top:32px;border-top:1px solid var(--line)}
+.nw-related h2{font-size:24px;margin-bottom:20px}
+@media(max-width:900px){.nw-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nw-hero{grid-template-columns:1fr}.nw-hero>img{min-height:0;aspect-ratio:16/9}}
+@media(max-width:600px){.nw-grid{grid-template-columns:1fr}.nw-hero-body{padding:22px}.nw-hero-body h2{font-size:22px}.nw-article h1{font-size:25px}.nw-body{font-size:15px}}

@@ -23,3 +23,9 @@
 .mt-empty h2{font-size:20px;color:var(--ink)}
 @media(max-width:900px){.mt-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.mt-grid{grid-template-columns:1fr}.mt-strip{padding-top:32px}.mt-strip-head h2{font-size:24px}.mt-page h1{font-size:27px}}
+
+.mt-season-promo{display:grid;gap:4px;margin-bottom:28px;padding:18px 20px;border-radius:8px;background:var(--green,#17533d);color:#fff;transition:box-shadow .2s}
+.mt-season-promo:hover{box-shadow:0 8px 24px #112f2530}
+.mt-season-promo span{font-size:12px;font-weight:700;color:var(--gold,#b58a2c)}
+.mt-season-promo b{font-size:20px}
+.mt-season-promo small{font-size:13px;opacity:.85}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { ArrowLeft, Check, Heart, Menu, Search, ShieldCheck, ShoppingBag, UserRound, X } from "lucide-react";
 import type { StoreData } from "@/lib/types";
 import { useShop } from "@/hooks/use-shop";
@@ -53,6 +54,12 @@ export function StoreShell({ store, nav, search, children }: StoreShellProps) {
   const searchRef = useRef<HTMLInputElement>(null);
   const shop = useShop(store.products, store.shipping);
   const session = useSession();
+  const pathname = usePathname() ?? "/";
+  /** Nav link props for an in-site section: marks it active on the section page and its detail pages. */
+  const navLink = (href: string, { also = [], className }: { also?: string[]; className?: string } = {}) => {
+    const active = [href, ...also].some(base => pathname === base || pathname.startsWith(`${base}/`));
+    return { href, className: [className, active && "active"].filter(Boolean).join(" ") || undefined, "aria-current": active ? ("page" as const) : undefined };
+  };
   const [authOpen, setAuthOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [resumeCheckout, setResumeCheckout] = useState(false);
@@ -101,10 +108,14 @@ export function StoreShell({ store, nav, search, children }: StoreShellProps) {
     <header className="header">
       <a className="brand" href="/" aria-label="متجر الأنصار - الرئيسية"><img src="/images/logo.svg" alt="الأنصار" width="152" height="62" /><span>المتجر</span></a>
       <nav className="desktop-nav" aria-label="التنقل الرئيسي">
-        <button className={nav.isShopAllActive ? "active" : ""} onClick={nav.onShopAll}>تسوق الكل</button>
-        <a href="/matches">تذاكر المباريات</a>
-        <a href="/orders">طلباتي</a>
-        <a href="/tickets">تذاكري</a>
+        <button className={nav.isShopAllActive ? "active" : ""} aria-current={nav.isShopAllActive ? "page" : undefined} onClick={nav.onShopAll}>اكتشف المجموعة</button>
+        <a {...navLink("/matches")}>تذاكر المباريات</a>
+        <a {...navLink("/season-pass")}>التذكرة الموسمية</a>
+        <a {...navLink("/events")}>الفعاليات</a>
+        <a {...navLink("/news")}>الأخبار</a>
+        <a {...navLink("/gallery", { also: ["/videos"], className: "nav-wide-only" })}>المعرض</a>
+        {session.user && <a {...navLink("/orders")}>طلباتي</a>}
+        {session.user && <a {...navLink("/tickets")}>تذاكري</a>}
         <a href={nav.storyHref}>حكايتنا</a>
       </nav>
       <div className="header-actions">
@@ -116,12 +127,12 @@ export function StoreShell({ store, nav, search, children }: StoreShellProps) {
         <button className="cart-trigger" title="سلة التسوق" aria-label={`سلة التسوق، ${count} منتجات`} onClick={() => setCartOpen(true)}><ShoppingBag size={21} /><span className="cart-word">السلة</span><span className="cart-count">{count}</span></button>
       </div>
     </header>
-    {menuOpen && <nav className="mobile-nav" aria-label="قائمة الموبايل"><button onClick={closeMenuThen(nav.onShopAll)}>تسوق الكل <ArrowLeft size={17} /></button><a href="/matches">تذاكر المباريات <ArrowLeft size={17} /></a><a href="/orders">طلباتي <ArrowLeft size={17} /></a><a href="/tickets">تذاكري <ArrowLeft size={17} /></a>{session.user ? <button onClick={() => void session.logout()}>تسجيل الخروج</button> : <button onClick={closeMenuThen(() => setAuthOpen(true))}>تسجيل الدخول</button>}<button onClick={closeMenuThen(nav.onFavorites)}>المفضلة <Heart size={17} /></button></nav>}
+    {menuOpen && <nav className="mobile-nav" aria-label="قائمة الموبايل"><button className={nav.isShopAllActive ? "active" : undefined} aria-current={nav.isShopAllActive ? "page" : undefined} onClick={closeMenuThen(nav.onShopAll)}>اكتشف المجموعة <ArrowLeft size={17} /></button><a {...navLink("/matches")}>تذاكر المباريات <ArrowLeft size={17} /></a><a {...navLink("/season-pass")}>التذكرة الموسمية <ArrowLeft size={17} /></a><a {...navLink("/events")}>الفعاليات <ArrowLeft size={17} /></a><a {...navLink("/news")}>الأخبار <ArrowLeft size={17} /></a><a {...navLink("/gallery", { also: ["/videos"] })}>المعرض <ArrowLeft size={17} /></a>{session.user && <><a {...navLink("/orders")}>طلباتي <ArrowLeft size={17} /></a><a {...navLink("/tickets")}>تذاكري <ArrowLeft size={17} /></a></>}{session.user ? <button onClick={() => void session.logout()}>تسجيل الخروج</button> : <button onClick={closeMenuThen(() => setAuthOpen(true))}>تسجيل الدخول</button>}<button onClick={closeMenuThen(nav.onFavorites)}>المفضلة <Heart size={17} /></button></nav>}
     {searchOpen && <div className="search-bar"><Search size={20} /><input ref={searchRef} value={search.query} maxLength={100} onChange={e => search.onQueryChange(e.target.value)} onKeyDown={e => { if (e.key === "Enter") search.onSubmit(); if (e.key === "Escape") setSearchOpen(false); }} placeholder="ابحث عن طقمك القادم…" aria-label="ابحث في المنتجات" />{search.query && <button className="icon-button" aria-label="مسح البحث" title="مسح البحث" onClick={() => search.onQueryChange("")}><X size={18} /></button>}<button className="text-button" onClick={search.onSubmit}>عرض النتائج <ArrowLeft size={16} /></button></div>}
 
     {children(api)}
 
-    <footer className="footer"><div className="footer-main section-shell"><div className="footer-brand"><img src="/images/crest.svg" width="56" height="66" alt="شعار الأنصار" /><h2>الأنصار يجمعنا.</h2><p>من قلب المدينة، إلى كل قلب أنصاري.</p></div><div className="footer-links"><h3>تسوق الأنصار</h3><button onClick={nav.onShopAll}>المجموعة كاملة</button><a href="/orders">طلباتي</a><button onClick={nav.onFavorites}>مفضلتي</button></div><div className="footer-links"><h3>نحن معك</h3>{store.policies.map(p => <button key={p.id} onClick={() => setPolicy(p)}>{p.title}</button>)}</div><div className="footer-message"><span>وعدنا واحد</span><p>كلنا أنصار.<br />دائمًا وأبدًا.</p><span dir="ltr">ROOTED IN MADINAH.</span></div></div><div className="footer-bottom section-shell"><span>© {new Date().getFullYear()} متجر الأنصار</span><span>الأسعار تشمل ضريبة القيمة المضافة</span><span dir="ltr">SAUDI ARABIA · SAR</span></div></footer>
+    <footer className="footer"><div className="footer-main section-shell"><div className="footer-brand"><img src="/images/crest.svg" width="56" height="66" alt="شعار الأنصار" /><h2>الأنصار يجمعنا.</h2><p>من قلب المدينة، إلى كل قلب أنصاري.</p></div><div className="footer-links"><h3>تسوق الأنصار</h3><button onClick={nav.onShopAll}>المجموعة كاملة</button><a href="/orders">طلباتي</a><button onClick={nav.onFavorites}>مفضلتي</button></div><div className="footer-links"><h3>المركز الإعلامي</h3><a href="/news">الأخبار</a><a href="/gallery">المعرض</a></div><div className="footer-links"><h3>نحن معك</h3>{store.policies.map(p => <button key={p.id} onClick={() => setPolicy(p)}>{p.title}</button>)}</div><div className="footer-message"><span>وعدنا واحد</span><p>كلنا أنصار.<br />دائمًا وأبدًا.</p><span dir="ltr">ROOTED IN MADINAH.</span></div></div><div className="footer-bottom section-shell"><span>© {new Date().getFullYear()} متجر الأنصار</span><span>الأسعار تشمل ضريبة القيمة المضافة</span><span dir="ltr">SAUDI ARABIA · SAR</span></div></footer>
     <CartDialog open={cartOpen} onClose={() => setCartOpen(false)} products={store.products} cart={shop.cart} totals={shop.totals} onQuantity={shop.setQuantity} onCheckout={startCheckout} />
     <CheckoutDialog open={checkoutOpen} onClose={() => setCheckoutOpen(false)} products={store.products} cart={shop.cart} user={session.user} onRequireSignIn={requireSignIn} />
     <AuthDialog open={authOpen} onClose={() => { setAuthOpen(false); setResumeCheckout(false); }} onSignedIn={(user) => { session.setUser(user); setAuthOpen(false); setToast(`أهلًا ${user.name || ""}`.trim()); if (resumeCheckout) { setResumeCheckout(false); setCheckoutOpen(true); } }} />

@@ -83,7 +83,7 @@ export default function PayClient() {
       {payment && <p className="co-amount">المبلغ المستحق: {money(payment.amountHalalah)}</p>}
       {error ? <p className="acc-error" role="alert">{error}</p> : !payment && <p role="status">نجهّز عملية الدفع…</p>}
       <div className="mysr-form" />
-      {payment && <TamaraOption orderId={orderId} amountHalalah={payment.amountHalalah} />}
+      {payment && <TamaraOption entity={{ type: "ORDER", id: orderId }} amountHalalah={payment.amountHalalah} />}
       <a className="co-back" href="/orders">طلباتي</a>
     </div>
   </main>;

@@ -28,6 +28,11 @@ export default function MatchesPage({ store, matches }: { store: StoreData; matc
       <span className="section-kicker">مباريات الأنصار</span>
       <h1>تذاكر المباريات<span className="heading-dot">.</span></h1>
       <p className="mt-page-intro">اختر المباراة والمدرج، وادفع إلكترونيًا، وتصلك تذاكرك فورًا مع رمز الدخول.</p>
+      <a className="mt-season-promo" href="/season-pass">
+        <span>التذكرة الموسمية</span>
+        <b>موسم كامل بتذكرة واحدة</b>
+        <small>اختر فئتك ومقعدك وادفع إلكترونيًا</small>
+      </a>
       {matches.length === 0
         ? <div className="mt-empty"><h2>لا توجد مباريات متاحة للحجز الآن</h2><p>نعلن عن التذاكر فور فتح البيع.</p><a className="button button-primary" href="/">تصفّح المتجر</a></div>
         : <div className="mt-grid">{matches.map((match) => <MatchCard key={match.id} match={match} />)}</div>}

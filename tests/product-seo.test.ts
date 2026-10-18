@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  absoluteImageUrl, buildRobots, buildSitemap, formatSar, isProductId, jsonLdScript,
+  absoluteImageUrl, buildRobots, buildSitemap, contentHubSitemap, formatSar, isProductId, jsonLdScript,
   productDescription, productJsonLd, productPath, productShareText, productUrl, SITE_URL,
 } from "../lib/product-seo";
 import type { Product } from "../lib/types";
@@ -72,4 +72,13 @@ test("robots allows the store and blocks private paths", () => {
   const robots = buildRobots();
   assert.deepEqual(robots.rules, [{ userAgent: "*", allow: "/", disallow: ["/api/", "/orders", "/checkout/", "/tickets"] }]);
   assert.equal(robots.sitemap, "https://store.alansar.sa/sitemap.xml");
+});
+
+test("content hub sitemap lists news and gallery", () => {
+  const now = new Date("2026-10-14T00:00:00.000Z");
+  const entries = contentHubSitemap(now);
+  assert.deepEqual(entries.map((entry) => entry.url), [
+    "https://store.alansar.sa/news", "https://store.alansar.sa/gallery",
+  ]);
+  assert.ok(entries.every((entry) => entry.changeFrequency === "daily" && entry.lastModified === now));
 });

@@ -8,6 +8,8 @@ import { ReviewHighlights } from "./review-highlights";
 import { AppPromo } from "./app-promo";
 import { StoreShell } from "./store-shell";
 import { MatchesStrip } from "./matches-strip";
+import { MediaStrip } from "./media-strip";
+import { NewsStrip } from "./news-strip";
 import { productPriceRange } from "@/lib/cart";
 import { formatAverage, reviewCountLabel } from "@/lib/reviews";
 import { offerFor } from "@/lib/offer";
@@ -102,6 +104,8 @@ function Shop({ store }: { store: StoreData }) {
         <div className="manifesto"><span>نادي واحد. مدينة واحدة. انتماء لا ينتهي.</span><img src="/images/crest.svg" width="26" height="30" alt="" /><span dir="ltr">ONE CLUB. ONE CITY. ALWAYS ANSAR.</span></div>
 
         <MatchesStrip />
+        <NewsStrip />
+        <MediaStrip />
 
         <section className="catalog-section section-shell" id="collection">
           <div className="section-heading"><div><span className="section-kicker">ألواننا تجمعنا</span><h2>{favoritesOnly ? "اختياراتك المفضلة" : "ارتدِ الانتماء"}<span className="heading-dot">.</span></h2><p>{favoritesOnly ? "قطع اخترتها، وحكاية تشبهك." : "أطقم الموسم الجديد، لكل من يحمل الأنصار في قلبه."}</p></div><span className="collection-edition" dir="ltr">THE {store.season}<br /><b>COLLECTION</b></span></div>

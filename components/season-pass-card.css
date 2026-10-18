@@ -1,0 +1,11 @@
+.sp-section{margin-bottom:32px}
+.sp-section h2{font-size:22px;line-height:1.5;margin-bottom:16px}
+.sp-card{border:1px solid var(--line,#e4e7e2);border-radius:8px;background:#fff;padding:20px;display:grid;gap:14px;justify-items:start}
+.sp-card-pending{border-style:dashed}
+.sp-card-head{display:grid;gap:6px}
+.sp-card-head h2{font-size:20px;line-height:1.5;margin:0}
+.sp-card-head p{display:flex;align-items:center;gap:6px;color:var(--muted,#68726b);font-size:13px;margin:0}
+.sp-card-kicker{font-size:12px;font-weight:700;color:var(--gold,#b58a2c)}
+.sp-card-qr{width:200px;height:200px;background:#fff;justify-self:center}
+.sp-card-qr svg{width:100%;height:100%;display:block}
+.sp-card-note{color:var(--muted,#68726b);font-size:13px;margin:0}

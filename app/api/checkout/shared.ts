@@ -63,7 +63,7 @@ const intentSchema = z.object({
   sdk_config: z.object({ metadata: z.object({ payment_id: z.string(), entity_type: z.string(), entity_id: z.string() }) }),
 });
 
-export async function createEntityIntent(token: string, entityType: "ORDER" | "MATCH_BOOKING", entityId: string): Promise<NonNullable<CheckoutResult["payment"]>> {
+export async function createEntityIntent(token: string, entityType: "ORDER" | "MATCH_BOOKING" | "SEASON_PASS" | "EVENT", entityId: string): Promise<NonNullable<CheckoutResult["payment"]>> {
   const { data } = await upstream<unknown>("/api/v2/payments/create-intent", { method: "POST", token, body: { entity_type: entityType, entity_id: entityId } });
   const intent = intentSchema.parse(data);
   return { paymentId: intent.payment_id, givenId: intent.given_id, amountHalalah: intent.amount, currency: intent.currency, description: intent.description, metadata: intent.sdk_config.metadata };
@@ -85,3 +85,11 @@ export const matchPaymentStateSchema = z.object({
   entity_type: z.literal("MATCH_BOOKING"),
   entity_id: z.string(),
 });
+
+/** Payment state for ticket checkouts: match bookings, season passes and event bookings (web-events). Order payments never match. */
+export const ticketPaymentStateSchema = z.object({
+  status: z.enum(["INITIATED", "PENDING", "PAID", "FAILED", "REFUNDED", "REFUNDING"]),
+  entity_type: z.enum(["MATCH_BOOKING", "SEASON_PASS", "EVENT"]),
+  entity_id: z.string(),
+});
+

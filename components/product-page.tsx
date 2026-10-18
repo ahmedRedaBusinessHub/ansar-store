@@ -17,7 +17,7 @@ export default function ProductPage({ store, product }: { store: StoreData; prod
       onShopAll: () => window.location.assign("/#collection"),
       onFavorites: () => window.location.assign("/?favorites=1#collection"),
       storyHref: "/#our-story",
-      isShopAllActive: false,
+      isShopAllActive: true,
     }}
     search={{
       query,

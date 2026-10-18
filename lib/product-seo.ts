@@ -80,6 +80,13 @@ export function buildSitemap(products: Product[], lastModified: Date): MetadataR
   ];
 }
 
+/** News and media hub list pages (spec 2026-10-14). Article URLs come from newsSitemapEntries. */
+export function contentHubSitemap(lastModified: Date): MetadataRoute.Sitemap {
+  return ["/news", "/gallery"].map((path) => ({
+    url: `${SITE_URL}${path}`, lastModified, changeFrequency: "daily" as const, priority: 0.7,
+  }));
+}
+
 export function buildRobots(): MetadataRoute.Robots {
   return {
     rules: [{ userAgent: "*", allow: "/", disallow: ["/api/", "/orders", "/checkout/", "/tickets"] }],
