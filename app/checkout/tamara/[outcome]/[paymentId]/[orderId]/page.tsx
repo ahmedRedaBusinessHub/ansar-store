@@ -28,7 +28,7 @@ async function lookupPayment(paymentId: string): Promise<PaymentEntityRef | null
 
 // Tamara sends the shopper here (URLs built by web-api from TAMARA_WEB_RETURN_URL_BASE). Its own query string is ignored:
 // success goes to the result page, which asks web-api (not the URL) whether the payment settled.
-// The last segment is named [orderId] for history; it holds a store-order id or a season-pass id.
+// The last segment is named [orderId] for history; it holds an order, season pass, event booking or match booking id.
 export default async function TamaraReturnPage({ params }: { params: Promise<{ outcome: string; paymentId: string; orderId: string }> }) {
   const { outcome, paymentId, orderId: entityId } = await params;
   if (!OUTCOMES.has(outcome) || !UUID.test(paymentId) || !UUID.test(entityId)) notFound();

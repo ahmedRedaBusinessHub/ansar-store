@@ -5,6 +5,7 @@ import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import type { CartItem, Product, SiteContent } from "../lib/types";
 import { cartKey, MAX_PER_PRODUCT, unitPrice } from "../lib/cart";
 import { CloseButton, Dialog } from "./dialog";
+import { TabbyPromo } from "./tabby-promo";
 import "./shop-dialogs.css";
 
 const money = (value: number) => `${new Intl.NumberFormat("ar-SA", { maximumFractionDigits: 2 }).format(value)} ر.س`;
@@ -46,6 +47,7 @@ function CartContent({ onClose, products, cart, totals, onQuantity, onCheckout }
         })}</ul>
       </div>
       <footer className="sd-cart-footer"><dl><div className="sd-total"><dt>المجموع</dt><dd>{money(totals.total)}</dd></div></dl>
+        <TabbyPromo priceSar={totals.total} source="cart" />
         <button type="button" className="sd-primary" onClick={onCheckout}>إتمام الطلب<ArrowLeft size={19} /></button>
         <p className="sd-demo-note">تُحتسب الخصومات والمبلغ النهائي في الخطوة التالية.</p></footer>
     </>}

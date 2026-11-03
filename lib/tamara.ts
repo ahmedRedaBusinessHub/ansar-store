@@ -9,19 +9,21 @@ export function isTamaraCheckoutUrl(value: unknown): value is string {
 
 const ENTITY_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** What a storefront Tamara checkout pays for: a store order, a season pass, or an event booking. */
-export type InstalmentEntity = { type: "ORDER" | "SEASON_PASS" | "EVENT"; id: string };
+/** What a storefront Tamara checkout pays for: a store order, a season pass, an event booking, or a match booking. */
+export type InstalmentEntity = { type: "ORDER" | "SEASON_PASS" | "EVENT" | "MATCH_BOOKING"; id: string };
 
-/** Exactly one of `orderId` / `passId` / `subscriptionId`, a UUID. Anything else is null. */
+/** Exactly one of `orderId` / `passId` / `subscriptionId` / `bookingId`, a UUID. Anything else is null. */
 export function instalmentEntity(input: {
   orderId?: unknown;
   passId?: unknown;
   subscriptionId?: unknown;
+  bookingId?: unknown;
 }): InstalmentEntity | null {
   const candidates: Array<{ type: InstalmentEntity["type"]; id: unknown }> = [];
   if (input.orderId !== undefined && input.orderId !== null) candidates.push({ type: "ORDER", id: input.orderId });
   if (input.passId !== undefined && input.passId !== null) candidates.push({ type: "SEASON_PASS", id: input.passId });
   if (input.subscriptionId !== undefined && input.subscriptionId !== null) candidates.push({ type: "EVENT", id: input.subscriptionId });
+  if (input.bookingId !== undefined && input.bookingId !== null) candidates.push({ type: "MATCH_BOOKING", id: input.bookingId });
   if (candidates.length !== 1) return null;
   const { type, id } = candidates[0];
   if (typeof id !== "string" || !ENTITY_ID.test(id)) return null;

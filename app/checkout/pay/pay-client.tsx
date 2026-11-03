@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { PENDING_PAYMENT_KEY, readPendingPayment, type PendingPayment } from "../../../lib/pending-payment";
 import { moyasarMethodConfig, readMethodFlags } from "../../../lib/payment-methods";
 import TamaraOption from "./tamara-option";
+import TabbyOption from "./tabby-option";
 
 declare global {
   interface Window { Moyasar?: { init(config: Record<string, unknown>): void } }
@@ -84,6 +85,7 @@ export default function PayClient() {
       {error ? <p className="acc-error" role="alert">{error}</p> : !payment && <p role="status">نجهّز عملية الدفع…</p>}
       <div className="mysr-form" />
       {payment && <TamaraOption entity={{ type: "ORDER", id: orderId }} amountHalalah={payment.amountHalalah} />}
+      {payment && <TabbyOption entity={{ type: "ORDER", id: orderId }} amountHalalah={payment.amountHalalah} />}
       <a className="co-back" href="/orders">طلباتي</a>
     </div>
   </main>;

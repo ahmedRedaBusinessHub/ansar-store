@@ -24,5 +24,4 @@ test("season pass: success → ticket result page; failure → ticket pay page",
 test("no lookup, a mismatched entity id, or another type → neutral", () => {
   assert.deepEqual(tamaraReturnAction("success", P, E, null), { kind: "neutral" });
   assert.deepEqual(tamaraReturnAction("success", P, E, { entityType: "SEASON_PASS", entityId: P }), { kind: "neutral" });
-  assert.deepEqual(tamaraReturnAction("success", P, E, { entityType: "MATCH_BOOKING", entityId: E }), { kind: "neutral" });
 });

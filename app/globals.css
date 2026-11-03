@@ -14,3 +14,4 @@
 .product-rating svg{color:var(--gold)}
 .product-rating b{color:var(--ink);font-weight:700}
 @media(min-width:801px){.footer-main{grid-template-columns:1.4fr 1fr 1fr 1fr 1.1fr}}.footer-links a{color:#bdc9c1;font-size:10px;padding:2px 0}.footer-links a:hover{color:white;text-decoration:underline}@media(max-width:1150px){.desktop-nav .nav-wide-only{display:none}}
+.tabby-promo-slot{min-height:0;margin-top:8px;max-width:100%}

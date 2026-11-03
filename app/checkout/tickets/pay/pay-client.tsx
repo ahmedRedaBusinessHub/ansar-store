@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import TamaraOption from "../../pay/tamara-option";
+import TabbyOption from "../../pay/tabby-option";
 import { loadMoyasar } from "@/lib/moyasar-loader";
 import { moyasarMethodConfig, readMethodFlags } from "@/lib/payment-methods";
 import type { PendingPayment } from "@/lib/pending-payment";
@@ -147,6 +148,10 @@ function TicketPayment({ target, expires }: { target: TicketCheckoutTarget; expi
             <div className="mysr-form" />
             {target.kind === "pass" && payment && <TamaraOption entity={{ type: "SEASON_PASS", id: target.passId }} amountHalalah={payment.amountHalalah} />}
             {target.kind === "event" && payment && <TamaraOption entity={{ type: "EVENT", id: target.subscriptionId }} amountHalalah={payment.amountHalalah} />}
+            {target.kind === "booking" && payment && <TamaraOption entity={{ type: "MATCH_BOOKING", id: target.bookingId }} amountHalalah={payment.amountHalalah} />}
+            {target.kind === "pass" && payment && <TabbyOption entity={{ type: "SEASON_PASS", id: target.passId }} amountHalalah={payment.amountHalalah} />}
+            {target.kind === "event" && payment && <TabbyOption entity={{ type: "EVENT", id: target.subscriptionId }} amountHalalah={payment.amountHalalah} />}
+            {target.kind === "booking" && payment && <TabbyOption entity={{ type: "MATCH_BOOKING", id: target.bookingId }} amountHalalah={payment.amountHalalah} />}
           </>}
       <a className="co-back" href={copy.backHref}>{copy.backLabel}</a>
     </div>

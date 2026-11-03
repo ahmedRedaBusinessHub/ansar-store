@@ -104,6 +104,12 @@ The pay page asks `/api/payments/instalments/eligibility` → shows "قسّمه�
 
 Locally the Tamara webhook cannot reach a dev machine; the result page's sync call is what settles the payment.
 
+### Tabby
+
+Shares the same overall flow as Tamara using the BFF routes under `/api/payments/instalments/*`: the pay page asks `/api/payments/instalments/eligibility` → POST `/api/payments/instalments/checkout` → redirect to Tabby's hosted checkout → Tabby returns the shopper to return pages under `/checkout/tabby/...` (`/checkout/tabby/{success|failure|cancel}/<paymentId>/<orderId>`) → success redirects to `/checkout/result`, which settles the payment through web-api's sync (it asks web-api, never trusts the URL). The option appears only when the platform flag `tabby_enabled` is on.
+
+The web-api env var `TABBY_WEB_RETURN_URL_BASE` must equal this storefront's origin. Promo and card snippets load from https://checkout.tabby.ai (`tabby-promo.js` / `tabby-card.js`); public key + merchant code come from `/api/tabby-config`, backed by the web-api `tabby_enabled` flag.
+
 ## Assets
 
 Club logos and Almarai fonts are copied from existing repository assets. Campaign photographs come from the reference club storefront https://alansarksa.com/ (Salla CDN). Use these only for the club's authorized storefront; verify publication rights before reuse elsewhere.

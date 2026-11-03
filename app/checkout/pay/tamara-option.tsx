@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { entityIdKey } from "@/lib/tabby";
 import type { InstalmentEntity } from "@/lib/tamara";
 
 type Eligibility = { available: boolean; instalments: number | null; instalmentAmountHalalah: number | null };
@@ -24,11 +25,17 @@ const ERRORS: Record<InstalmentEntity["type"], Record<string, string>> = {
     EVENT_FULLY_BOOKED: "اكتمل الحجز لهذه الفعالية.",
     INSUFFICIENT_SLOTS: "لم يعد هناك مكان كافٍ لهذا الحجز.",
   },
+  MATCH_BOOKING: {
+    AMOUNT_MISMATCH: "تغيّر سعر التذكرة. حدّث الصفحة ثم حاول مجددًا.",
+    ENTITY_NOT_AWAITING_PAYMENT: "هذه التذكرة مدفوعة أو انتهت مهلة حجزها.",
+    INSTALMENTS_AMOUNT_OUT_OF_RANGE: "سعر التذاكر خارج حدود التقسيط مع تمارا.",
+  },
 };
 const SIGN_IN: Record<InstalmentEntity["type"], string> = {
   ORDER: "سجّل الدخول من صفحة المتجر ثم عد لإكمال الدفع.",
   SEASON_PASS: "سجّل الدخول من صفحة التذكرة الموسمية ثم عد لإكمال الدفع.",
   EVENT: "سجّل الدخول من صفحة الفعالية ثم عد لإكمال الدفع.",
+  MATCH_BOOKING: "سجّل الدخول من صفحة المباراة ثم حاول مجددًا.",
 };
 
 /** Tamara instalments for a store order, season pass, or event booking: shown only when web-api says it is eligible. Redirects to Tamara's hosted checkout. */
@@ -36,7 +43,7 @@ export default function TamaraOption({ entity, amountHalalah }: { entity: Instal
   const [eligibility, setEligibility] = useState<Eligibility | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const idKey = entity.type === "ORDER" ? "orderId" : entity.type === "SEASON_PASS" ? "passId" : "subscriptionId";
+  const idKey = entityIdKey(entity);
   const entityId = entity.id;
   const entityType = entity.type;
 

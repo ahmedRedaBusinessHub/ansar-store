@@ -29,5 +29,11 @@ export function tamaraReturnAction(
     if (outcome === "success") return { kind: "redirect", to: `/checkout/tickets/result?payment=${paymentId}&event=${entityId}` };
     return { kind: "retry", outcome, retryHref: `/checkout/tickets/pay?event=${entityId}`, backHref: "/tickets", backLabel: "تذاكري" };
   }
+  if (payment.entityType === "MATCH_BOOKING") {
+    if (outcome === "success") return { kind: "redirect", to: `/checkout/tickets/result?payment=${paymentId}&booking=${entityId}` };
+    return { kind: "retry", outcome, retryHref: `/checkout/tickets/pay?booking=${entityId}`, backHref: "/tickets", backLabel: "تذاكري" };
+  }
   return { kind: "neutral" };
 }
+
+export { tamaraReturnAction as instalmentReturnAction };

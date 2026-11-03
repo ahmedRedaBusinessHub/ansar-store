@@ -8,6 +8,7 @@ import { offerFor } from "@/lib/offer";
 import { productShareText, productUrl } from "@/lib/product-seo";
 import { CloseButton, Dialog } from "./dialog";
 import { ProductReviews } from "./product-reviews";
+import { TabbyPromo } from "./tabby-promo";
 import type { StoreShellApi } from "./store-shell";
 import "./shop-dialogs.css";
 import "./product-detail.css";
@@ -89,6 +90,7 @@ export function ProductDetail({ product, api }: { product: Product; api: StoreSh
         <div className="sd-product-info">
           <h1 id={titleId}>{product.name}</h1>
           <div className="sd-price">{!complete && priceRange.variable && <small>يبدأ من</small>}<strong>{money(displayedPrice)}</strong>{offer && <><del aria-label={`السعر قبل العرض ${money(offer.original)}`}>{money(offer.original)}</del><em className="sd-offer-badge">وفّر {offer.percentOff}٪</em></>}</div>
+          <TabbyPromo priceSar={displayedPrice} source="product" />
           {product.description && <p className="sd-description" style={{ whiteSpace: "pre-line" }}>{product.description}</p>}
           {product.optionGroups.map((group) => <fieldset key={group.id} className="sd-size-field">
             <legend>{group.name} <span>{group.options.find((option) => option.id === choices[group.id])?.label ?? (group.required ? "اختر" : "اختياري")}</span></legend>
